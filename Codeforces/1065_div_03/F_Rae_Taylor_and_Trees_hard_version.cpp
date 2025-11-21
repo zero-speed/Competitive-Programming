@@ -27,7 +27,6 @@ void solve() {
         auto l = ans.upper_bound(a[i]);
         auto r = ans.end();
         for(auto it = l; it != r; ++it){
-            //cout<<a[i]<<" "<<*it<<endl; 
             cola.push_back({a[i], *it});
         }
         auto x =ans.lower_bound(a[i]);
