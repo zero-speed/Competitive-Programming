@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'notebook/**'
+      - 'note book/**'
       - 'generate_notebook_pdf.py'
       - '.github/workflows/notebook-pdf.yml'
 

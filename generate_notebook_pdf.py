@@ -128,7 +128,19 @@ def main():
     output_file = Path(args.output)
 
     if not source_dir.exists() or not source_dir.is_dir():
-        raise SystemExit(f"Directorio de source no existe: {source_dir}")
+        fallback_steps = [Path('notebook'), Path('note book')]
+        if source_dir in fallback_steps:
+            fallback_steps = [p for p in fallback_steps if p != source_dir]
+        found = None
+        for candidate in fallback_steps:
+            if candidate.exists() and candidate.is_dir():
+                found = candidate
+                break
+        if found is not None:
+            print(f"Atención: carpeta {source_dir} no existe; usando {found} en su lugar.")
+            source_dir = found
+        else:
+            raise SystemExit(f"Directorio de source no existe: {source_dir}. Prueba con 'notebook' o 'note book'.")
 
     ignore_names = IGNORE_DEFAULT.union({n.strip() for n in args.ignore})
 
