@@ -1,0 +1,41 @@
+name: Generar PDF Notebook Competitivo
+
+on:
+  push:
+    paths:
+      - 'notebook/**'
+      - 'generate_notebook_pdf.py'
+      - '.github/workflows/notebook-pdf.yml'
+
+jobs:
+  build_pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Instalar LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+
+      - name: Generar main.tex desde los .cpp
+        run: |
+          python generate_notebook_pdf.py --source notebook --output main.tex --ignore test.cpp tests.cpp
+
+      - name: Compilar PDF con pdflatex
+        run: |
+          pdflatex -interaction=nonstopmode main.tex
+          pdflatex -interaction=nonstopmode main.tex
+
+      - name: Publicar artifact PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: notebook-competitive-pdf
+          path: main.pdf

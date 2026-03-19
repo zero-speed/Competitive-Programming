@@ -1,0 +1,45 @@
+% main.tex base para notebook competitivo
+% Puedes regenerar este archivo con `python generate_notebook_pdf.py`
+\documentclass[10pt,twocolumn]{article}
+\usepackage[margin=0.7cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{codegray}{gray}{0.92}
+\definecolor{backgray}{gray}{0.98}
+\lstdefinestyle{Competitive}{%
+  backgroundcolor=\color{backgray},%
+  basicstyle=\ttfamily\scriptsize,%
+  breaklines=true,%
+  keepspaces=true,%
+  columns=fullflexible,%
+  frame=single,%
+  numberstyle=\tiny,%
+  numbers=left,%
+  showstringspaces=false,%
+  tabsize=2,%
+  captionpos=b,%
+  language=C++%
+}
+
+\title{Notebook de Programación Competitiva}
+\author{Generado automáticamente}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\vspace{0.5cm}
+
+% Secciones y contenido se generan con generate_notebook_pdf.py
+
+\section{Ejemplo}
+\subsection{Ejemplo de código}
+\lstinputlisting[style=Competitive]{notebook/ejemplo.cpp}
+
+\end{document}
