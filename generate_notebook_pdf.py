@@ -21,6 +21,12 @@ TEMPLATE_HEADER = r"""\documentclass[9pt]{article}
 \usepackage{xcolor}
 \usepackage{amssymb}
 \usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
 \usepackage{listings}
 
 % ====== COLORES ======
