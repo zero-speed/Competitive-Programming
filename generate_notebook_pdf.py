@@ -55,7 +55,7 @@ TEMPLATE_HEADER = r"""\documentclass[9pt]{article}
 
 \setlength{\headheight}{35pt}
 \setlength{\headsep}{5pt}
-\setlength{\footskip}{10pt}
+\setlength{\footskip}{12pt}
 
 % ====== TITULOS ======
 \titleformat{\section}
@@ -130,7 +130,7 @@ TEMPLATE_TABLES = r"""
 \begin{center}
 \begin{tabular}{|c|p{5cm}|c|p{14cm}|c|}
 \hline
-\textbf{Problem} & \textbf{Tags} & \textbf{Complexity} & \textbf{Observations} & \textbf{✔} \\
+\textbf{Problem} & \textbf{Tags} & \textbf{Complexity} & \textbf{Observations} & \textbf{\checkmark} \\
 \hline
 A & & & & \\
 \hline
@@ -238,8 +238,9 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
             display = fp.stem.replace('_', ' ').title()
             body_lines.append(f"\\subsection{{{latex_escape(display)}}}\n")
             relative_cpp_path = fp.as_posix()
+            safe_path = f"\\detokenize{{{relative_cpp_path}}}"
             body_lines.append('\n'.join([
-                f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}, label={{lst:{latex_escape(fp.stem)}}}]{{{relative_cpp_path}}}",
+                f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}, label={{lst:{latex_escape(fp.stem)}}}]{{{safe_path}}}",
                 ""
             ]))
 
