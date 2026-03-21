@@ -5,18 +5,29 @@ from pathlib import Path
 
 IGNORE_DEFAULT = {"test.cpp", "tests.cpp", "example.cpp"}
 
-LATEX_HEADER = r"""\documentclass[10pt,twocolumn]{article}
-\usepackage[margin=0.7cm]{geometry}
+# Plantilla LaTeX personalizada
+TEMPLATE_HEADER = r"""\documentclass[9pt]{article}
+
+% ====== PAQUETES ======
+\usepackage[a4paper,margin=1.0cm,landscape]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{microtype}
-\usepackage{parskip}
-\usepackage{hyperref}
-\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
-\usepackage{listings}
+\usepackage{multicol}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{array}
 \usepackage{xcolor}
-\definecolor{codegray}{gray}{0.92}
-\definecolor{backgray}{gray}{0.98}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{listings}
+
+% ====== COLORES ======
+\definecolor{accent}{RGB}{0,102,204}
+\definecolor{backgray}{gray}{0.97}
+
+% ====== ESTILO DE CODIGO (DEL PRIMERO ��) ======
 \lstdefinestyle{Competitive}{
   backgroundcolor=\color{backgray},
   basicstyle=\ttfamily\scriptsize,
@@ -25,27 +36,148 @@ LATEX_HEADER = r"""\documentclass[10pt,twocolumn]{article}
   keepspaces=true,
   columns=fullflexible,
   frame=single,
-  rulecolor=\color{gray},
   numbers=left,
   numberstyle=\tiny,
   showstringspaces=false,
-  showtabs=false,
   tabsize=2,
-  captionpos=b,
   language=C++
 }
 
-\title{Notebook de Programación Competitiva}
-\author{Generado automáticamente}
-\date{\today}
+% ====== HEADER / FOOTER ======
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{Notebook ICPC}
+
+
+
+\fancyfoot[C]{\small \thepage/\pageref{LastPage} \;|\; huevo el contest}
+
+\setlength{\headheight}{35pt}
+\setlength{\headsep}{5pt}
+\setlength{\footskip}{10pt}
+
+% ====== TITULOS ======
+\titleformat{\section}
+  {\color{accent}\bfseries\small}
+  {}
+  {0em}
+  {}
+
+\setlength{\columnsep}{1.0cm}
 
 \begin{document}
-\maketitle
-\tableofcontents
+
+% ================= HOJA 1 =================
+\begin{multicols}{2}
+
+% ====== PORTADA ======
+\begin{center}
+\vspace*{1cm}
+
+{\Huge \bfseries Notebook ICPC}
+
+\vspace{0.3cm}
+{\Large \textcolor{accent}{Programación Competitiva}}
+
+\vspace{1cm}
+\rule{0.6\columnwidth}{0.5pt}
+
 \vspace{0.5cm}
+
+{\large Equipo XYZ}
+
+\vspace{0.3cm}
+{\small UNSAAC / INFO XD}
+
+\vspace{0.5cm}
+
+{\small
+-------- \\
+-------- \\
+--------
+}
+
+\vspace{1cm}
+
+{\small \today}
+
+\end{center}
+
+\vfill
+\columnbreak
+
+% ====== INDICE ======
+\tableofcontents
+
+\end{multicols}
+
+\newpage
+
+% ================= CONTENIDO =================
+\begin{multicols}{2}
 """
 
-LATEX_FOOTER = r"""
+TEMPLATE_TABLES = r"""
+\end{multicols}
+
+\newpage
+
+% ================= TABLAS GRANDES =================
+
+\newcommand{\problemstable}{
+\renewcommand{\arraystretch}{1.8}
+\begin{center}
+\begin{tabular}{|c|p{5cm}|c|p{14cm}|c|}
+\hline
+\textbf{Problem} & \textbf{Tags} & \textbf{Complexity} & \textbf{Observations} & \textbf{✔} \\
+\hline
+A & & & & \\
+\hline
+B & & & & \\
+\hline
+C & & & & \\
+\hline
+D & & & & \\
+\hline
+E & & & & \\
+\hline
+F & & & & \\
+\hline
+G & & & & \\
+\hline
+H & & & & \\
+\hline
+I & & & & \\
+\hline
+J & & & & \\
+\hline
+K & & & & \\
+\hline
+L & & & & \\
+\hline
+M & & & & \\
+\hline
+N & & & & \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+% ====== TABLAS ======
+\section*{Concursante 1}
+\problemstable
+
+\newpage
+
+\section*{Concursante 2}
+\problemstable
+
+\newpage
+
+\section*{Concursante 3}
+\problemstable
+
 \end{document}
 """
 
@@ -95,7 +227,7 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
     if not files_by_dir:
         raise SystemExit('No se encontraron archivos .cpp en ' + str(source_dir))
 
-    body_lines = [LATEX_HEADER]
+    body_lines = [TEMPLATE_HEADER]
 
     for rel_dir in sorted(files_by_dir.keys(), key=lambda x: str(x).lower()):
         section_title = format_section_name(rel_dir)
@@ -111,7 +243,7 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
                 ""
             ]))
 
-    body_lines.append(LATEX_FOOTER)
+    body_lines.append(TEMPLATE_TABLES)
 
     output_file.write_text('\n'.join(body_lines), encoding='utf-8')
     print(f"main.tex generado: {output_file}")
