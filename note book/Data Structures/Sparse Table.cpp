@@ -1,10 +1,10 @@
 /*
-i → índice inicial
+i -> indice inicial
 k=0:  5   2   4   7   1   3   6   0   8  Consulta [L, R]
 k=1:  2   2   4   1   1   3   0   0      [---- rango ----]
 k=2:  2   1   1   1   0   0              [-- 2^j --]     <- comienza en L 
 k=3:  0   0                                 [-- 2^j --]  <- termina en R
-                                        → combinas 2 valores 
+                                        -> combinas 2 valores 
 */
 struct sparce_table{   
     vector<vector<int>> tabla;
