@@ -13,7 +13,7 @@ struct DSU { // complexity: O(α(n)) ~ O(1)
         return parent[a] = find(parent[a]); // path compression
     }
 
-    //  Unión por tamaño
+    //  Union por tamaño
     void unir_size(int a, int b) {
         a = find(a);
         b = find(b);
@@ -24,7 +24,7 @@ struct DSU { // complexity: O(α(n)) ~ O(1)
         }
     }
 
-    //  Unión por rank
+    //  Union por rank
     void unir_rank(int a, int b) {
         a = find(a);
         b = find(b);
