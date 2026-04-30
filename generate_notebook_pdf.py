@@ -216,7 +216,9 @@ def format_section_name(rel_path: Path) -> str:
 
 def scan_files(source_dir: Path, ignore_names: set) -> dict:
     files_by_dir = defaultdict(list)
-    for file in sorted(source_dir.rglob('*.cpp')):
+    for file in sorted(source_dir.rglob('*')):
+        if file.suffix.lower() not in {'.cpp', '.txt'}:
+            continue
         if file.name in ignore_names:
             continue
         # ignora ficheros dentro de cualquier carpeta "tests" o con prefijo test
@@ -231,7 +233,7 @@ def scan_files(source_dir: Path, ignore_names: set) -> dict:
 def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
     files_by_dir = scan_files(source_dir, ignore_names)
     if not files_by_dir:
-        raise SystemExit('No se encontraron archivos .cpp en ' + str(source_dir))
+        raise SystemExit('No se encontraron archivos .cpp o .txt en ' + str(source_dir))
 
     body_lines = [TEMPLATE_HEADER]
 
@@ -257,7 +259,7 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Generar main.tex para notebook competitivo a partir de .cpp')
+    parser = argparse.ArgumentParser(description='Generar main.tex para notebook competitivo a partir de .cpp y .txt')
     parser.add_argument('--source', default='notebook', help='Directorio raíz de notebook (default notebook)')
     parser.add_argument('--output', default='main.tex', help='Archivo TeX de salida (default main.tex)')
     parser.add_argument('--ignore', nargs='*', default=[], help='Nombres de archivos a ignorar (test.cpp)')
