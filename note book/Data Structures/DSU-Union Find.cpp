@@ -1,4 +1,4 @@
-struct DSU { // complexity: O(α(n)) ~ O(1)
+struct DSU { // complexity: O(alpha(n)) ~ O(1)
     vector<int> parent, size, rank;
 
     DSU(int n) {
