@@ -1,0 +1,75 @@
+<cmath>
+Las siguientes funciones devuelven valores en bouble, float o long y pueden tomar como argumento valores del mismo tipo
+
+Función     | Dominio             | Rango                | Tipo (C++)
+------------|---------------------|----------------------|-------------------
+sin(x)      | x ∈ R               | [-1, 1]              | double
+cos(x)      | x ∈ R               | [-1, 1]              | double
+tan(x)      | x ∈ R*              | R                    | double
+
+asin(x)     | x ∈ [-1, 1]         | [-π/2, π/2]          | double
+acos(x)     | x ∈ [-1, 1]         | [0, π]               | double
+atan(x)     | x ∈ R               | [-π/2, π/2]          | double
+atan2(y,x)  | x,y ∈ R             | [-π, π]              | double
+
+sinh(x)     | x ∈ R               | R                    | double
+cosh(x)     | x ∈ R               | [1, +∞)              | double
+tanh(x)     | x ∈ R               | (-1, 1)              | double
+
+exp(x)      | x ∈ R               | (0, +∞)              | double
+
+log(x)      | x > 0               | R                    | double
+log10(x)    | x > 0               | R                    | double
+
+sqrt(x)     | x ≥ 0               | [0, +∞)              | double
+
+ceil(x)     | x ∈ R               | Z                    | double → int/ll
+floor(x)    | x ∈ R               | Z                    | double → int/ll
+
+fabs(x)     | x ∈ R               | [0, +∞)              | double
+abs(x)      | x ∈ Z               | [0, +∞)              | int / long long
+
+<algorith> & <numeric>
+las siguientes funciones son ecsenciales para areglos y vectores
+
+Funcian                                         | Qua hace                              | Orden
+------------------------------------------------|---------------------------------------|------
+lower_bound(v.begin(), v.end(), x)              | primer elemento >= x                  | sí
+upper_bound(v.begin(), v.end(), x)              | primer elemento > x                   | sí
+binary_search(v.begin(), v.end(), x)            | verifica si x existe                  | sí
+equal_range(v.begin(), v.end(), x)              | rango [lower_bound, upper_bound)      | sí
+
+sort(v.begin(), v.end())                        | ordena ascendente                     | no
+sort(v.begin(), v.end(), greater<int>())        | ordena descendente                    | no
+
+is_sorted(v.begin(), v.end())                   | verifica si esta ordenado             | no
+
+reverse(v.begin(), v.end())                     | invierte el arreglo                   | no
+
+nth_element(v.begin(), v.begin()+k, v.end())    | k-ésimo elemento en posición correcta | no
+
+min_element(v.begin(), v.end())                 | mínimo elemento                       | no
+max_element(v.begin(), v.end())                 | máximo elemento                       | no
+
+count(v.begin(), v.end(), x)                    | cuenta ocurrencias de x               | no
+find(v.begin(), v.end(), x)                     | busca x (lineal)                      | no
+
+son intrinsics del compilador (principalmente de GCC y Clang).
+
+Función                          | Qué hace                                  | Tipo
+---------------------------------|--------------------------------------------|-------------------
+__builtin_popcount(x)            | cuenta bits en 1 (int)                     | int
+__builtin_popcountll(x)          | cuenta bits en 1 (long long)               | int
+
+__builtin_clz(x)                 | ceros a la izquierda (int)                 | int
+__builtin_clzll(x)               | ceros a la izquierda (ll)                  | int
+
+__builtin_ctz(x)                 | ceros a la derecha (int)                   | int
+__builtin_ctzll(x)               | ceros a la derecha (ll)                    | int
+
+__builtin_parity(x)              | paridad (#bits 1 % 2)                      | int
+
+__builtin_ffs(x)                 | primer bit encendido (1-indexado)          | int
+
+__builtin_expect(x, val)         | hint de predicción de ramas                | int
+
