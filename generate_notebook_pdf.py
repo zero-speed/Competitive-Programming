@@ -28,6 +28,7 @@ TEMPLATE_HEADER = r"""\documentclass[9pt]{article}
     citecolor=black
 }
 \usepackage{listings}
+\usepackage{verbatim}
 
 % ====== COLORES ======
 \definecolor{accent}{RGB}{0,102,204}
@@ -247,10 +248,11 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
             body_lines.append(f"\\subsection{{{latex_escape(display)}}}\n")
             relative_cpp_path = fp.as_posix()
             safe_path = f"\\detokenize{{{relative_cpp_path}}}"
-            body_lines.append('\n'.join([
-                f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}, label={{lst:{latex_escape(fp.stem)}}}]{{{safe_path}}}",
-                ""
-            ]))
+            if fp.suffix.lower() == '.cpp':
+                body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}, label={{lst:{latex_escape(fp.stem)}}}]{{{safe_path}}}")
+            else:  # .txt
+                body_lines.append(f"\\input{{{safe_path}}}")
+            body_lines.append("")
 
     body_lines.append(TEMPLATE_TABLES)
 
