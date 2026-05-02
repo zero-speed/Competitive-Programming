@@ -1,43 +1,43 @@
 <cmath>
-Las siguientes funciones devuelven valores en bouble, float o long y pueden tomar como argumento valores del mismo tipo
+Las siguientes funciones devuelven valores en double, float o long double y pueden tomar como argumento valores del mismo tipo
 
-Función     | Dominio             | Rango                | Tipo (C++)
+Funcion     | Dominio             | Rango                | Tipo (C++)
 ------------|---------------------|----------------------|-------------------
-sin(x)      | x ∈ R               | [-1, 1]              | double
-cos(x)      | x ∈ R               | [-1, 1]              | double
-tan(x)      | x ∈ R*              | R                    | double
+sin(x)      | x in R              | [-1, 1]              | double
+cos(x)      | x in R              | [-1, 1]              | double
+tan(x)      | x in R*             | R                    | double
 
-asin(x)     | x ∈ [-1, 1]         | [-π/2, π/2]          | double
-acos(x)     | x ∈ [-1, 1]         | [0, π]               | double
-atan(x)     | x ∈ R               | [-π/2, π/2]          | double
-atan2(y,x)  | x,y ∈ R             | [-π, π]              | double
+asin(x)     | x in [-1, 1]        | [-pi/2, pi/2]        | double
+acos(x)     | x in [-1, 1]        | [0, pi]              | double
+atan(x)     | x in R              | [-pi/2, pi/2]        | double
+atan2(y,x)  | x,y in R            | [-pi, pi]            | double
 
-sinh(x)     | x ∈ R               | R                    | double
-cosh(x)     | x ∈ R               | [1, +∞)              | double
-tanh(x)     | x ∈ R               | (-1, 1)              | double
+sinh(x)     | x in R              | R                    | double
+cosh(x)     | x in R              | [1, +inf)            | double
+tanh(x)     | x in R              | (-1, 1)              | double
 
-exp(x)      | x ∈ R               | (0, +∞)              | double
+exp(x)      | x in R              | (0, +inf)            | double
 
 log(x)      | x > 0               | R                    | double
 log10(x)    | x > 0               | R                    | double
 
-sqrt(x)     | x ≥ 0               | [0, +∞)              | double
+sqrt(x)     | x >= 0              | [0, +inf)            | double
 
-ceil(x)     | x ∈ R               | Z                    | double → int/ll
-floor(x)    | x ∈ R               | Z                    | double → int/ll
+ceil(x)     | x in R              | Z                    | double -> int/ll
+floor(x)    | x in R              | Z                    | double -> int/ll
 
-fabs(x)     | x ∈ R               | [0, +∞)              | double
-abs(x)      | x ∈ Z               | [0, +∞)              | int / long long
+fabs(x)     | x in R              | [0, +inf)            | double
+abs(x)      | x in Z              | [0, +inf)            | int / long long
 
-<algorith> & <numeric>
-las siguientes funciones son ecsenciales para areglos y vectores
+<algorithm> & <numeric>
+Las siguientes funciones son esenciales para arreglos y vectores
 
-Funcian                                         | Qua hace                              | Orden
+Funcion                                         | Que hace                              | Orden
 ------------------------------------------------|---------------------------------------|------
-lower_bound(v.begin(), v.end(), x)              | primer elemento >= x                  | sí
-upper_bound(v.begin(), v.end(), x)              | primer elemento > x                   | sí
-binary_search(v.begin(), v.end(), x)            | verifica si x existe                  | sí
-equal_range(v.begin(), v.end(), x)              | rango [lower_bound, upper_bound)      | sí
+lower_bound(v.begin(), v.end(), x)              | primer elemento >= x                  | si
+upper_bound(v.begin(), v.end(), x)              | primer elemento > x                   | si
+binary_search(v.begin(), v.end(), x)            | verifica si x existe                  | si
+equal_range(v.begin(), v.end(), x)              | rango [lower_bound, upper_bound)      | si
 
 sort(v.begin(), v.end())                        | ordena ascendente                     | no
 sort(v.begin(), v.end(), greater<int>())        | ordena descendente                    | no
@@ -46,17 +46,17 @@ is_sorted(v.begin(), v.end())                   | verifica si esta ordenado     
 
 reverse(v.begin(), v.end())                     | invierte el arreglo                   | no
 
-nth_element(v.begin(), v.begin()+k, v.end())    | k-ésimo elemento en posición correcta | no
+nth_element(v.begin(), v.begin()+k, v.end())    | k-esimo elemento en posicion correcta | no
 
-min_element(v.begin(), v.end())                 | mínimo elemento                       | no
-max_element(v.begin(), v.end())                 | máximo elemento                       | no
+min_element(v.begin(), v.end())                 | minimo elemento                       | no
+max_element(v.begin(), v.end())                 | maximo elemento                       | no
 
 count(v.begin(), v.end(), x)                    | cuenta ocurrencias de x               | no
 find(v.begin(), v.end(), x)                     | busca x (lineal)                      | no
 
-son intrinsics del compilador (principalmente de GCC y Clang).
+Son intrinsics del compilador (principalmente de GCC y Clang).
 
-Función                          | Qué hace                                  | Tipo
+Funcion                          | Que hace                                  | Tipo
 ---------------------------------|--------------------------------------------|-------------------
 __builtin_popcount(x)            | cuenta bits en 1 (int)                     | int
 __builtin_popcountll(x)          | cuenta bits en 1 (long long)               | int
@@ -71,5 +71,4 @@ __builtin_parity(x)              | paridad (#bits 1 % 2)                      | 
 
 __builtin_ffs(x)                 | primer bit encendido (1-indexado)          | int
 
-__builtin_expect(x, val)         | hint de predicción de ramas                | int
-
+__builtin_expect(x, val)         | hint de prediccion de ramas                | int
