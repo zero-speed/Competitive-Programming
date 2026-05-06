@@ -54,11 +54,11 @@ TEMPLATE_HEADER = r"""\documentclass[9pt]{article}
 \pagestyle{fancy}
 \fancyhf{}
 
-\fancyhead[L]{Notebook ICPC}
+\fancyhead[L]{Notebook ICPC 2026}
 
 
 
-\fancyfoot[C]{\small \thepage/\pageref{LastPage} \;|\; huevo el contest}
+\fancyfoot[C]{\small \thepage/\pageref{LastPage} \;\;        Universidad Nacional de San Antonio Abab del Cusco - EPIIS}
 
 \setlength{\headheight}{35pt}
 \setlength{\headsep}{5pt}
@@ -92,17 +92,17 @@ TEMPLATE_HEADER = r"""\documentclass[9pt]{article}
 
 \vspace{0.5cm}
 
-{\large Equipo XYZ}
+{\large Equipo :::::}
 
 \vspace{0.3cm}
-{\small UNSAAC / INFO XD}
+{\small Universidad Nacional De San Antonio Abad del Cusco - EPIIS}
 
 \vspace{0.5cm}
 
 {\small
--------- \\
--------- \\
---------
+unos \\
+dos \\
+tres
 }
 
 \vspace{1cm}
