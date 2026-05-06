@@ -1,5 +1,6 @@
-\begin{lstlisting}
 <cmath>
+/*
+
 Las siguientes funciones devuelven valores en double, float o long double y pueden tomar como argumento valores del mismo tipo
 
 Funcion     | Dominio             | Rango                | Tipo (C++)
@@ -73,4 +74,5 @@ __builtin_parity(x)              | paridad (#bits 1 % 2)                      | 
 __builtin_ffs(x)                 | primer bit encendido (1-indexado)          | int
 
 __builtin_expect(x, val)         | hint de prediccion de ramas                | int
-\end{lstlisting}
+
+*/

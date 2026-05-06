@@ -5,7 +5,7 @@
 using namespace std;
 using namespace __gnu_pbds;
 
-// Definición de ordered_set
+// Definicion de ordered_set
 typedef tree<
     long long,              // tipo de dato
     null_type,              // mapped type (null para set)
