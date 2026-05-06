@@ -39,7 +39,7 @@ bool buscar(Nodo* raiz, long long valor) {
         return buscar(raiz->der, valor);
 }
 
-// Encontrar mínimo
+// Encontrar minimo
 Nodo* encontrarMin(Nodo* raiz) {
     while (raiz && raiz->izq != nullptr)
         raiz = raiz->izq;
