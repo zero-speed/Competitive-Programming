@@ -1,7 +1,7 @@
-// Algoritmo de Kruskal para encontrar el Árbol de Expansión Mínima (MST)
+// Algoritmo de Kruskal para encontrar el Arbol de Expansión Minima (MST)
 // Complejidad: O(m log m) donde m es el número de aristas
 // - O(m log m) para ordenar las aristas
-// - O(m * α(n)) para las operaciones de DSU (α es inversa de Ackermann, prácticamente O(1))
+// - O(m * α(n)) para las operaciones de DSU (α es inversa de Ackermann, practicamente O(1))
 // - Total: O(m log m)
 
 #include <bits/stdc++.h>
@@ -25,19 +25,19 @@ public:
     // Encontrar el representante (raíz) del conjunto con compresión de ruta
     int encontrar(int u) {
         if(padre[u] != u) {
-            padre[u] = encontrar(padre[u]); // Compresión de ruta
+            padre[u] = encontrar(padre[u]); // Compresion de ruta
         }
         return padre[u];
     }
     
-    // Unir dos conjuntos usando unión por rango
+    // Unir dos conjuntos usando union por rango
     bool unir(int u, int v) {
         int raiz_u = encontrar(u);
         int raiz_v = encontrar(v);
         
-        if(raiz_u == raiz_v) return false; // Ya están en el mismo conjunto
+        if(raiz_u == raiz_v) return false; // Ya estan en el mismo conjunto
         
-        // Unión por rango: conectar el árbol más pequeño al más grande
+        // Union por rango: conectar el arbol mas pequeno al más grande
         if(rango[raiz_u] < rango[raiz_v]) {
             padre[raiz_u] = raiz_v;
         } else if(rango[raiz_u] > rango[raiz_v]) {
