@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 import argparse
+import json
+import subprocess
+import shutil
 from collections import defaultdict
 from pathlib import Path
 
@@ -218,7 +221,7 @@ def format_section_name(rel_path: Path) -> str:
 def scan_files(source_dir: Path, ignore_names: set) -> dict:
     files_by_dir = defaultdict(list)
     for file in sorted(source_dir.rglob('*')):
-        if file.suffix.lower() not in {'.cpp', '.txt'}:
+        if file.suffix.lower() not in {'.cpp', '.txt', '.md'}:
             continue
         if file.name in ignore_names:
             continue
@@ -234,7 +237,7 @@ def scan_files(source_dir: Path, ignore_names: set) -> dict:
 def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
     files_by_dir = scan_files(source_dir, ignore_names)
     if not files_by_dir:
-        raise SystemExit('No se encontraron archivos .cpp o .txt en ' + str(source_dir))
+        raise SystemExit('No se encontraron archivos .cpp, .md o .txt en ' + str(source_dir))
 
     body_lines = [TEMPLATE_HEADER]
 
@@ -250,8 +253,17 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
             safe_path = f"\\detokenize{{{relative_cpp_path}}}"
             if fp.suffix.lower() == '.cpp':
                 body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}, label={{lst:{latex_escape(fp.stem)}}}]{{{safe_path}}}")
+            elif fp.suffix.lower() == '.md':
+                # Si existe una versión .tex (por ejemplo generada con pandoc), incluirla como \input
+                tex_equiv = fp.with_suffix('.tex')
+                if tex_equiv.exists():
+                    tex_path = tex_equiv.as_posix()
+                    body_lines.append(f"\\input{{{tex_path}}}")
+                else:
+                    # si no hay .tex, incluir el markdown como listing verbatim
+                    body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}]{{{safe_path}}}")
             else:  # .txt
-                body_lines.append(f"\\input{{{safe_path}}}")
+                body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}]{{{safe_path}}}")
             body_lines.append("")
 
     body_lines.append(TEMPLATE_TABLES)
@@ -260,10 +272,105 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
     print(f"main.tex generado: {output_file}")
 
 
+def generate_notebook(source_dir: Path, output_file: Path, ignore_names: set):
+    files_by_dir = scan_files(source_dir, ignore_names)
+    if not files_by_dir:
+        raise SystemExit('No se encontraron archivos .cpp, .md o .txt en ' + str(source_dir))
+
+    cells = []
+
+    # Portada / título
+    title_md = [
+        '# Notebook ICPC',
+        '\n',
+        'Compilación de códigos, notas y fórmulas. Generado automáticamente.'
+    ]
+    cells.append({
+        'cell_type': 'markdown',
+        'metadata': {'language': 'markdown'},
+        'source': title_md
+    })
+
+    # README si existe
+    readme = source_dir.parent.joinpath('README.md')
+    if readme.exists():
+        txt = readme.read_text(encoding='utf-8')
+        cells.append({
+            'cell_type': 'markdown',
+            'metadata': {'language': 'markdown'},
+            'source': [txt]
+        })
+
+    for rel_dir in sorted(files_by_dir.keys(), key=lambda x: str(x).lower()):
+        section_title = format_section_name(rel_dir)
+        cells.append({
+            'cell_type': 'markdown',
+            'metadata': {'language': 'markdown'},
+            'source': [f'## {section_title}\n']
+        })
+
+        files = sorted(files_by_dir[rel_dir], key=lambda p: p.name.lower())
+        for fp in files:
+            display = fp.stem.replace('_', ' ').title()
+            cells.append({
+                'cell_type': 'markdown',
+                'metadata': {'language': 'markdown'},
+                'source': [f'### {display}  \n', f'**Archivo:** {fp.name}  \n']
+            })
+
+            content = fp.read_text(encoding='utf-8')
+            if fp.suffix.lower() == '.cpp':
+                code_block = ['```cpp\n', content, '\n```\n']
+                cells.append({
+                    'cell_type': 'markdown',
+                    'metadata': {'language': 'markdown'},
+                    'source': code_block
+                })
+            else:  # .md or .txt
+                # Si es .md lo incluimos tal cual (puede contener Markdown y fórmulas LaTeX)
+                cells.append({
+                    'cell_type': 'markdown',
+                    'metadata': {'language': 'markdown'},
+                    'source': [content]
+                })
+
+    nb = {
+        'cells': cells,
+        'metadata': {
+            'kernelspec': {
+                'name': 'python3',
+                'language': 'python',
+                'display_name': 'Python 3'
+            },
+            'language_info': {'name': 'python'}
+        },
+        'nbformat': 4,
+        'nbformat_minor': 5
+    }
+
+    output_file.write_text(json.dumps(nb, ensure_ascii=False, indent=2), encoding='utf-8')
+    print(f"Notebook generado: {output_file}")
+
+
+def try_convert_nb_to_pdf(nb_path: Path, pdf_path: Path):
+    if shutil.which('jupyter') is None and shutil.which('jupyter-nbconvert') is None:
+        print('nbconvert no encontrado en PATH; omitiendo conversión a PDF.')
+        return
+    try:
+        cmd = ['jupyter', 'nbconvert', '--to', 'pdf', str(nb_path), '--output', str(pdf_path.with_suffix(''))]
+        subprocess.run(cmd, check=True)
+        print(f'PDF generado: {pdf_path}')
+    except Exception as e:
+        print('Error al convertir a PDF:', e)
+
+
 def main():
-    parser = argparse.ArgumentParser(description='Generar main.tex para notebook competitivo a partir de .cpp y .txt')
+    parser = argparse.ArgumentParser(description='Generar main.tex o un .ipynb para notebook competitivo a partir de .cpp, .md y .txt')
     parser.add_argument('--source', default='notebook', help='Directorio raíz de notebook (default notebook)')
     parser.add_argument('--output', default='main.tex', help='Archivo TeX de salida (default main.tex)')
+    parser.add_argument('--notebook', default=None, help='Archivo .ipynb de salida (si se especifica, genera notebook)')
+    parser.add_argument('--to-pdf', action='store_true', help='Intentar convertir el notebook generado a PDF usando nbconvert')
+    parser.add_argument('--pdf-output', default='notebook.pdf', help='Ruta de salida PDF (si --to-pdf)')
     parser.add_argument('--ignore', nargs='*', default=[], help='Nombres de archivos a ignorar (test.cpp)')
     args = parser.parse_args()
 
@@ -287,7 +394,13 @@ def main():
 
     ignore_names = IGNORE_DEFAULT.union({n.strip() for n in args.ignore})
 
-    generate_main_tex(source_dir, output_file, ignore_names)
+    if args.notebook:
+        nb_path = Path(args.notebook)
+        generate_notebook(source_dir, nb_path, ignore_names)
+        if args.to_pdf:
+            try_convert_nb_to_pdf(nb_path, Path(args.pdf_output))
+    else:
+        generate_main_tex(source_dir, output_file, ignore_names)
 
 
 if __name__ == '__main__':

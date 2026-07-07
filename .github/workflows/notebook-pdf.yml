@@ -21,14 +21,22 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Instalar LaTeX
+      - name: Instalar LaTeX + Pandoc
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra pandoc
 
-      - name: Generar main.tex desde los .cpp
+      - name: Convertir .md a .tex (si existen) y generar main.tex
         run: |
-          python generate_notebook_pdf.py --source notebook --output main.tex --ignore test.cpp tests.cpp
+          # el script soporta 'note book' o 'notebook' por fallback
+          if [ -d "note book" ]; then SRC="note book"; elif [ -d notebook ]; then SRC=notebook; else SRC=notebook; fi
+          echo "Usando fuente: $SRC"
+          # convertir todos los .md en la carpeta fuente a .tex para que se rendericen bien en PDF
+          find "$SRC" -type f -name '*.md' -print0 | while IFS= read -r -d '' f; do
+            out="${f%.md}.tex"
+            pandoc "$f" -s -o "$out" || echo "pandoc fallo para $f"
+          done
+          python generate_notebook_pdf.py --source "$SRC" --output main.tex --ignore test.cpp tests.cpp
 
       - name: Compilar PDF con pdflatex
         run: |
