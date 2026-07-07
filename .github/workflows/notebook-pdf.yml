@@ -34,7 +34,8 @@ jobs:
           # convertir todos los .md en la carpeta fuente a .tex para que se rendericen bien en PDF
           find "$SRC" -type f -name '*.md' -print0 | while IFS= read -r -d '' f; do
             out="${f%.md}.tex"
-            pandoc "$f" -s -o "$out" || echo "pandoc fallo para $f"
+            # Generar fragmento LaTeX (sin preámbulo) para incluir con \input in main.tex
+            pandoc "$f" -t latex -o "$out" || echo "pandoc fallo para $f"
           done
           python generate_notebook_pdf.py --source "$SRC" --output main.tex --ignore test.cpp tests.cpp
 
