@@ -248,21 +248,38 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
         files = sorted(files_by_dir[rel_dir], key=lambda p: p.name.lower())
         for fp in files:
             display = fp.stem.replace('_', ' ').title()
-            body_lines.append(f"\\subsection{{{latex_escape(display)}}}\n")
             relative_cpp_path = fp.as_posix()
             safe_path = f"\\detokenize{{{relative_cpp_path}}}"
-            if fp.suffix.lower() == '.cpp':
-                body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}, label={{lst:{latex_escape(fp.stem)}}}]{{{safe_path}}}")
-            elif fp.suffix.lower() == '.md':
-                # Si existe una versión .tex (por ejemplo generada con pandoc), incluirla como \input
+
+            # Para .md que tengan un .tex equivalente (generado por pandoc),
+            # incluimos el contenido convertido pero adaptando los niveles de sección
+            # para que no creen nuevas secciones de primer nivel en el índice.
+            if fp.suffix.lower() == '.md':
                 tex_equiv = fp.with_suffix('.tex')
                 if tex_equiv.exists():
-                    tex_path = tex_equiv.as_posix()
-                    body_lines.append(f"\\input{{{tex_path}}}")
+                    raw = tex_equiv.read_text(encoding='utf-8')
+                    # Evitar cualquier preámbulo residual
+                    raw = raw.replace('\\begin{document}', '')
+                    raw = raw.replace('\\end{document}', '')
+                    # Ajustar niveles: \section -> \subsection, \subsection -> \subsubsection, etc.
+                    raw = raw.replace('\\section{', '\\subsection{')
+                    raw = raw.replace('\\subsection{', '\\subsubsection{')
+                    raw = raw.replace('\\subsubsection{', '\\paragraph{')
+                    body_lines.append(raw)
+                    body_lines.append("")
+                    continue
                 else:
-                    # si no hay .tex, incluir el markdown como listing verbatim
+                    # si no hay .tex, caemos al comportamiento de listing (verbatim)
+                    body_lines.append(f"\\subsection{{{latex_escape(display)}}}\n")
                     body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}]{{{safe_path}}}")
-            else:  # .txt
+                    body_lines.append("")
+                    continue
+
+            # Para .cpp y .txt (u otros), mostramos una subsección y el contenido en listing
+            body_lines.append(f"\\subsection{{{latex_escape(display)}}}\n")
+            if fp.suffix.lower() == '.cpp' or fp.suffix.lower() == '.txt':
+                body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}]{{{safe_path}}}")
+            else:
                 body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}]{{{safe_path}}}")
             body_lines.append("")
 
