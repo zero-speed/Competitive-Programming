@@ -255,6 +255,8 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
             # incluimos el contenido convertido pero adaptando los niveles de sección
             # para que no creen nuevas secciones de primer nivel en el índice.
             if fp.suffix.lower() == '.md':
+                # Siempre aseguramos una subsección para que aparezca en el índice
+                body_lines.append(f"\\subsection{{{latex_escape(display)}}}\n")
                 tex_equiv = fp.with_suffix('.tex')
                 if tex_equiv.exists():
                     raw = tex_equiv.read_text(encoding='utf-8')
@@ -269,8 +271,7 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
                     body_lines.append("")
                     continue
                 else:
-                    # si no hay .tex, caemos al comportamiento de listing (verbatim)
-                    body_lines.append(f"\\subsection{{{latex_escape(display)}}}\n")
+                    # si no hay .tex, incluir el markdown como listing verbatim
                     body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}]{{{safe_path}}}")
                     body_lines.append("")
                     continue
