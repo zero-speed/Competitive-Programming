@@ -128,12 +128,9 @@ tres
 \newpage
 
 % ================= CONTENIDO =================
-\begin{multicols}{2}
 """
 
 TEMPLATE_TABLES = r"""
-\end{multicols}
-
 \newpage
 
 % ================= TABLAS GRANDES =================
@@ -300,8 +297,6 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
                 body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}]{{{safe_path}}}")
             body_lines.append("")
 
-    body_lines.append("\\end{multicols}")
-    body_lines.append("\n")
     body_lines.append(TEMPLATE_TABLES)
 
     output_file.write_text('\n'.join(body_lines), encoding='utf-8')
