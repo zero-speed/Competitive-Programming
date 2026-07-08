@@ -26,17 +26,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra pandoc
 
-      - name: Convertir .md a .tex (si existen) y generar main.tex
+      - name: Generar main.tex desde los archivos Markdown
         run: |
           # el script soporta 'note book' o 'notebook' por fallback
           if [ -d "note book" ]; then SRC="note book"; elif [ -d notebook ]; then SRC=notebook; else SRC=notebook; fi
           echo "Usando fuente: $SRC"
-          # convertir todos los .md en la carpeta fuente a .tex para que se rendericen bien en PDF
-          find "$SRC" -type f -name '*.md' -print0 | while IFS= read -r -d '' f; do
-            out="${f%.md}.tex"
-            # Generar fragmento LaTeX (sin preámbulo) para incluir con \input in main.tex
-            pandoc "$f" -t latex -o "$out" || echo "pandoc fallo para $f"
-          done
           python generate_notebook_pdf.py --source "$SRC" --output main.tex --ignore test.cpp tests.cpp
 
       - name: Compilar PDF con pdflatex

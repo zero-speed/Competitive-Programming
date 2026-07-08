@@ -21,7 +21,10 @@ TEMPLATE_HEADER = r"""\documentclass[9pt]{article}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
 \usepackage{xcolor}
+\usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{hyperref}
 \hypersetup{
@@ -234,6 +237,23 @@ def scan_files(source_dir: Path, ignore_names: set) -> dict:
     return files_by_dir
 
 
+def convert_markdown_to_latex(markdown_path: Path) -> str | None:
+    tex_path = markdown_path.with_suffix('.tex')
+    if tex_path.exists() and tex_path.stat().st_mtime >= markdown_path.stat().st_mtime:
+        return tex_path.read_text(encoding='utf-8')
+
+    pandoc = shutil.which('pandoc')
+    if pandoc is None:
+        return None
+
+    try:
+        subprocess.run([pandoc, str(markdown_path), '-t', 'latex', '-o', str(tex_path)], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return tex_path.read_text(encoding='utf-8')
+    except Exception as exc:
+        print(f'No se pudo convertir {markdown_path} con pandoc: {exc}')
+        return None
+
+
 def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
     files_by_dir = scan_files(source_dir, ignore_names)
     if not files_by_dir:
@@ -251,30 +271,26 @@ def generate_main_tex(source_dir: Path, output_file: Path, ignore_names: set):
             relative_cpp_path = fp.as_posix()
             safe_path = f"\\detokenize{{{relative_cpp_path}}}"
 
-            # Para .md que tengan un .tex equivalente (generado por pandoc),
-            # incluimos el contenido convertido pero adaptando los niveles de sección
-            # para que no creen nuevas secciones de primer nivel en el índice.
+            # Para .md, intentamos convertirlos a LaTeX para que tablas y fórmulas
+            # se vean bien en el PDF, en vez de mostrarlos como texto literal.
             if fp.suffix.lower() == '.md':
-                # Siempre aseguramos una subsección para que aparezca en el índice
                 body_lines.append(f"\\subsection{{{latex_escape(display)}}}\n")
-                tex_equiv = fp.with_suffix('.tex')
-                if tex_equiv.exists():
-                    raw = tex_equiv.read_text(encoding='utf-8')
-                    # Evitar cualquier preámbulo residual
-                    raw = raw.replace('\\begin{document}', '')
+                converted = convert_markdown_to_latex(fp)
+                if converted is not None:
+                    raw = converted.replace('\\begin{document}', '')
                     raw = raw.replace('\\end{document}', '')
-                    # Ajustar niveles: \section -> \subsection, \subsection -> \subsubsection, etc.
                     raw = raw.replace('\\section{', '\\subsection{')
                     raw = raw.replace('\\subsection{', '\\subsubsection{')
                     raw = raw.replace('\\subsubsection{', '\\paragraph{')
                     body_lines.append(raw)
                     body_lines.append("")
                     continue
-                else:
-                    # si no hay .tex, incluir el markdown como listing verbatim
-                    body_lines.append(f"\\lstinputlisting[style=Competitive, caption={{ {latex_escape(fp.name)} }}]{{{safe_path}}}")
-                    body_lines.append("")
-                    continue
+
+                body_lines.append("\\begin{small}")
+                body_lines.append(f"\\verbatiminput{{\\detokenize{{{relative_cpp_path}}}}}")
+                body_lines.append("\\end{small}")
+                body_lines.append("")
+                continue
 
             # Para .cpp y .txt (u otros), mostramos una subsección y el contenido en listing
             body_lines.append(f"\\subsection{{{latex_escape(display)}}}\n")
